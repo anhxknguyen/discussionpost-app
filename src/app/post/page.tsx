@@ -3,10 +3,9 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/navigation";
 
 const DiscussionSchema = z.object({
-  id: z.string(),
   title: z.string().min(1, "Post title cannot be empty."),
   content: z.string().min(1, "Post content cannot be empty."),
 });
@@ -19,14 +18,29 @@ const CreatePost = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<DiscussionFormFields>({
-    defaultValues: {
-      id: uuidv4(),
-    },
     resolver: zodResolver(DiscussionSchema),
   });
 
-  const onSubmit: SubmitHandler<DiscussionFormFields> = (data) => {
-    console.log(data);
+  const router = useRouter();
+
+  const onSubmit: SubmitHandler<DiscussionFormFields> = async (data) => {
+    try {
+      const response = await fetch("/api/discussions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        console.log("Discussion post created successfully!");
+        router.push("/discussions");
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
