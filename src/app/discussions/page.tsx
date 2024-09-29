@@ -1,12 +1,12 @@
 import React from "react";
 
-const Discussions = () => {
-  type Discussion = {
-    id: number;
-    title: string;
-    content: string;
-  };
+type Discussion = {
+  id: number;
+  title: string;
+  content: string;
+};
 
+const Discussions = () => {
   const dis1: Discussion = {
     id: 1,
     title: "The Poop in My Pants",
